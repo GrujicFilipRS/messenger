@@ -13,21 +13,49 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    [Route("bubreg")]
     public IActionResult Index()
     {
         return View();
     }
 
-    public IActionResult Privacy()
+    [Route("about")]
+    public IActionResult About()
     {
         return View();
     }
 
-    [Route("test")]
-    public IActionResult Test123()
+    [Route("messages")]
+    public IActionResult Messages()
     {
-        return View();
+        int? name = HttpContext.Session.GetInt32("userid");
+        return Content($"Hello, {name}");
+    }
+
+    [HttpPost]
+    [Route("login")]
+    public IActionResult Login([FromForm] string username, [FromForm] string pwd)
+    {
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(pwd))
+        {
+            return Redirect("/?login&error=1");
+        }
+
+        username = username.Trim();
+        pwd = pwd.Trim();
+
+        int? userId = UserModel.GetUserId(username, pwd);
+
+        if (userId == null) return Redirect("/?login&error=2");
+
+        HttpContext.Session.SetInt32("userid", userId.Value);
+        return Redirect($"/messages");
+    }
+
+    [HttpPost]
+    [Route("signup")]
+    public IActionResult Signup([FromForm] string username, [FromForm] string pwd, [FromForm] string confirmpwd)
+    {
+        return Redirect($"/?username={username}&password={pwd}&confirmpwd={confirmpwd}");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

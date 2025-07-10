@@ -1,7 +1,20 @@
+using Messenger.Models;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+#if DEBUG
+builder.Services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
+#else
+services.AddControllersWithViews();
+#endif
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 WebApplication app = builder.Build();
 
@@ -16,7 +29,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+new UserModel("admin", "admin");
+
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthorization();
 

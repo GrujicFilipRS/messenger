@@ -3,6 +3,33 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Homepage</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <h1 class="display-4">Messenger</h1>
+    <p>Message your friends today!</p>
+
+    <form action="/signup" method="post">
+
+        <h2>Join us today!</h2>
+
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="pwd" placeholder="Password">
+        <input type="password" name="confirmpwd" placeholder="Confirm password">
+
+        <input type="submit" value="Create account">
+
+    </form>
+
+    <form action="/login" method="post">
+
+        <h2>Already have an account? Sign in!</h2>
+
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="pwd" placeholder="Password">
+
+        <input type="submit" value="Sign in">
+
+    </form>
+
+    <button onclick="switchLoginMode()">I already have an account</button>
+
 </div>
