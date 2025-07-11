@@ -7,4 +7,23 @@ public class AppDbContext : DbContext
         : base(options) { }
 
     public DbSet<UserModel> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<UserModel>()
+            .Property<int>("id")
+            .HasColumnName("Id")
+            .ValueGeneratedOnAdd();
+
+        modelBuilder.Entity<UserModel>()
+            .Property<string>("username")
+            .HasColumnName("Username");
+
+        modelBuilder.Entity<UserModel>()
+            .Property<string>("hashedPassword")
+            .HasColumnName("HashedPassword");
+
+        modelBuilder.Entity<UserModel>()
+            .HasKey("id");
+    }
 }

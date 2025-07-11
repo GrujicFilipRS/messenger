@@ -27,10 +27,9 @@ WebApplication app = builder.Build();
 // Seed DB
 using (IServiceScope scope = app.Services.CreateScope())
 {
-    IServiceProvider services = scope.ServiceProvider;
-    AppDbContext context = services.GetRequiredService<AppDbContext>();
-
-    DataSeeder.Initialize(context);
+    AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.EnsureCreated();
+    UserModel.LoadAll(context);
 }
 
 // Configure the HTTP request pipeline.
@@ -54,4 +53,10 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+
 app.Run();
+Console.WriteLine($"Length of users: {UserModel.users.Count}");
+foreach (UserModel user in UserModel.users)
+{
+    Console.WriteLine($"{user.id} {user.username} {user.hashedPassword.Substring(0, 10)}"); 
+}

@@ -17,14 +17,17 @@ public class UserModel
         this.id = id;
         this.username = username;
         this.hashedPassword = hashedPassword;
-
-        users.Add(this);
     }
 
     public UserModel(string username, string password)
     {
-        id = users.Count;
         this.username = username;
+        hashedPassword = HashPassword(password);
+    }
+
+    public static string HashPassword(string password)
+    {
+        string hashedPassword;
 
         using (SHA256 sha256Hash = SHA256.Create())
         {
@@ -39,7 +42,7 @@ public class UserModel
             hashedPassword = builder.ToString();
         }
 
-        users.Add(this);
+        return hashedPassword;
     }
 
     public int GetId() => id;
@@ -50,20 +53,7 @@ public class UserModel
     {
         if (newUsername == username) return 2;
 
-        string passwordEncrypted;
-        using (SHA256 sha256Hash = SHA256.Create())
-        {
-            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(passwordConfirmation));
-
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                builder.Append(bytes[i].ToString("x2"));
-            }
-
-            passwordEncrypted = builder.ToString();
-        }
-
+        string passwordEncrypted = HashPassword(passwordConfirmation);
         if (passwordEncrypted != hashedPassword) return 1;
 
         username = newUsername;
@@ -72,19 +62,7 @@ public class UserModel
 
     public static int? GetUserId(string username, string password)
     {
-        string passwordEncrypted;
-        using (SHA256 sha256Hash = SHA256.Create())
-        {
-            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                builder.Append(bytes[i].ToString("x2"));
-            }
-
-            passwordEncrypted = builder.ToString();
-        }
+        string passwordEncrypted = HashPassword(password);
 
         foreach (UserModel user in users)
         {
@@ -125,5 +103,12 @@ public class UserModel
         bool correctChars = username.All(x => validCharacters.Contains(x));
 
         return minimalLength && correctChars;
+    }
+
+    public static void LoadAll(AppDbContext context)
+    {
+        users = context.Users
+            .Select(u => new UserModel(u.id, u.username, u.hashedPassword))
+            .ToList();
     }
 }

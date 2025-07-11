@@ -13,6 +13,7 @@ public class UserService
     {
         _context.Users.Add(user);
         _context.SaveChanges();
+        UserModel.users.Add(user);
     }
 
     public List<UserModel> LoadAllUsers()
