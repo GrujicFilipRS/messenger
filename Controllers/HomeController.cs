@@ -19,6 +19,8 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        if (HttpContext.Session.GetInt32("userid") != null)
+            return Redirect("/messages");
         return View();
     }
 
