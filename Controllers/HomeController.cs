@@ -7,10 +7,12 @@ namespace Messenger.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly UserService _userService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, UserService userService)
     {
         _logger = logger;
+        _userService = userService;
     }
 
     public IActionResult Index()
@@ -40,9 +42,6 @@ public class HomeController : Controller
             return Redirect("/?login&error=1");
         }
 
-        username = username.Trim();
-        pwd = pwd.Trim();
-
         int? userId = UserModel.GetUserId(username, pwd);
 
         if (userId == null) return Redirect("/?login&error=2");
@@ -55,7 +54,27 @@ public class HomeController : Controller
     [Route("signup")]
     public IActionResult Signup([FromForm] string username, [FromForm] string pwd, [FromForm] string confirmpwd)
     {
-        return Redirect($"/?username={username}&password={pwd}&confirmpwd={confirmpwd}");
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(pwd))
+            return Redirect("/?signup&error=1");
+
+        username = username.Trim();
+        pwd = pwd.Trim();
+
+        if (!UserModel.ValidPassword(pwd))
+            return Redirect("/?signup&error=2");
+
+        if (!UserModel.ValidUsername(username))
+            return Redirect("/?signup&error=3");
+
+        if (UserModel.UserWithNameExists(username))
+            return Redirect("/?signup&error=4");
+
+        UserModel user = new UserModel(username, pwd);
+
+        _userService.RegisterUser(user);
+
+        HttpContext.Session.SetInt32("userid", user.GetId());
+        return Redirect("/messages");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

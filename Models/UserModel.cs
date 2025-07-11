@@ -6,9 +6,18 @@ public class UserModel
 {
     private static List<UserModel> users = new List<UserModel>();
 
-    private int id;
-    private string username;
-    private string hashedPassword;
+    public int id { get; private set; }
+    public string username { get; private set; }
+    public string hashedPassword { get; private set; }
+
+    public UserModel() { }
+
+    public UserModel(int id, string username, string hashedPassword)
+    {
+        this.id = id;
+        this.username = username;
+        this.hashedPassword = hashedPassword;
+    }
 
     public UserModel(string username, string password)
     {
@@ -35,17 +44,6 @@ public class UserModel
     public string GetUsername() => username;
     public string GetHashedPassword() => hashedPassword;
 
-    /// <summary>
-    /// Sets the username of the user to a new value
-    /// </summary>
-    /// <param name="newUsername">The new username</param>
-    /// <param name="passwordConfirmation">Confirmation of the password, not encrypted</param>
-    /// <returns>
-    /// Status code of the operation 
-    /// (Status code 0: success, 
-    /// Status code 1: password incorrect, 
-    /// Status code 2: username hasn't changed)
-    /// </returns>
     public int SetUsername(string newUsername, string passwordConfirmation)
     {
         if (newUsername == username) return 2;
@@ -92,5 +90,38 @@ public class UserModel
         }
 
         return null;
+    }
+
+    public static bool UserWithNameExists(string username)
+    {
+        return users.Any(x => x.username == username);
+    }
+
+    public static bool ValidPassword(string password)
+    {
+        char[] uppercaseLetters = Enumerable.Range('A', 26).Select(x => (char)x).ToArray();
+        char[] lowercaseLetters = Enumerable.Range('a', 26).Select(x => (char)x).ToArray();
+
+        bool correctLength = password.Length >= 8;
+        bool oneUppercase = password.Any(x => uppercaseLetters.Contains(x));
+        bool oneLowercase = password.Any(x => lowercaseLetters.Contains(x));
+        bool noSpaces = !password.Any(x => x == ' ');
+
+        return correctLength && oneUppercase && oneLowercase && noSpaces;
+    }
+
+    public static bool ValidUsername(string username)
+    {
+        char[] uppercaseLetters = Enumerable.Range('A', 26).Select(x => (char)x).ToArray();
+        char[] lowercaseLetters = Enumerable.Range('a', 26).Select(x => (char)x).ToArray();
+        char[] numbersChars = Enumerable.Range('0', 10).Select(x => (char)x).ToArray();
+        char[] specialChars = { '_', '-' };
+
+        char[] validCharacters = uppercaseLetters.Concat(lowercaseLetters).Concat(numbersChars).Concat(specialChars).ToArray();
+
+        bool minimalLength = username.Length >= 6;
+        bool correctChars = username.All(x => validCharacters.Contains(x));
+
+        return minimalLength && correctChars;
     }
 }

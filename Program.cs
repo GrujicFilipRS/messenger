@@ -1,4 +1,5 @@
 using Messenger.Models;
+using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,11 @@ builder.Services.AddControllersWithViews()
 #else
 services.AddControllersWithViews();
 #endif
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=app.db"));
+
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddSession(options =>
 {
