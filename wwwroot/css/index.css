@@ -18,10 +18,6 @@ body {
     width: 100vw;
 }
 
-.title-subtitle {
-    /*margin-bottom: 100px;*/
-}
-
 form {
     flex-direction: column;
     width: 60%;
