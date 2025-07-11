@@ -43,12 +43,12 @@ public class HomeController : Controller
     {
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(pwd))
         {
-            return Redirect("/?login&error=1");
+            return Redirect("/?p=login&error=1");
         }
 
         int? userId = UserModel.GetUserId(username, pwd);
 
-        if (userId == null) return Redirect("/?login&error=2");
+        if (userId == null) return Redirect("/?p=login&error=2");
 
         HttpContext.Session.SetInt32("userid", userId.Value);
         return Redirect($"/messages");
@@ -59,23 +59,23 @@ public class HomeController : Controller
     public IActionResult Signup([FromForm] string username, [FromForm] string pwd, [FromForm] string confirmpwd)
     {
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(pwd) || string.IsNullOrWhiteSpace(confirmpwd))
-            return Redirect("/?signup&error=1");
+            return Redirect("/?p=signup&error=1");
 
         username = username.Trim();
         pwd = pwd.Trim();
         confirmpwd = confirmpwd.Trim();
 
         if (pwd != confirmpwd)
-            return Redirect("/?signup&error=2");
+            return Redirect("/?p=signup&error=2");
 
         if (!UserModel.ValidPassword(pwd))
-            return Redirect("/?signup&error=3");
+            return Redirect("/?p=signup&error=3");
 
         if (!UserModel.ValidUsername(username))
-            return Redirect("/?signup&error=4");
+            return Redirect("/?p=signup&error=4");
 
         if (UserModel.UserWithNameExists(username))
-            return Redirect("/?signup&error=5");
+            return Redirect("/?p=signup&error=5");
 
         UserModel user = new UserModel(username, pwd);
 

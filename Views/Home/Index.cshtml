@@ -2,34 +2,40 @@
     ViewData["Title"] = "Home Page";
 }
 
+<link rel="stylesheet" href="./css/index.css">
+<script src="./js/index.js" defer></script>
+
 <div class="text-center">
+    <div class="title-subtitle">
+        <h1 class="display-4">Messenger</h1>
+        <p>Message your friends today!</p>
+    </div>
 
-    <h1 class="display-4">Messenger</h1>
-    <p>Message your friends today!</p>
+    <form action="/signup" method="post" id="signup-form">
 
-    <form action="/signup" method="post">
+        <h2>Join today!</h2>
 
-        <h2>Join us today!</h2>
-
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="pwd" placeholder="Password">
-        <input type="password" name="confirmpwd" placeholder="Confirm password">
+        <input type="text" name="username" placeholder="Username"><br>
+        <input type="password" name="pwd" placeholder="Password"><br>
+        <input type="password" name="confirmpwd" placeholder="Confirm password"><br>
 
         <input type="submit" value="Create account">
 
     </form>
 
-    <form action="/login" method="post">
+    <form action="/login" method="post" id="login-form">
 
         <h2>Already have an account? Sign in!</h2>
 
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="pwd" placeholder="Password">
+        <input type="text" name="username" placeholder="Username"><br>
+        <input type="password" name="pwd" placeholder="Password"><br>
 
         <input type="submit" value="Sign in">
 
     </form>
 
     <button onclick="switchLoginMode()">I already have an account</button>
+
+    <p id="error-display"></p>
 
 </div>
