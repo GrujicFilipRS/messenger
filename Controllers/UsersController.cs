@@ -22,15 +22,4 @@ public class UsersController : ControllerBase
         _context.SaveChanges();
         return CreatedAtAction(nameof(Get), new { id = user.id }, user);
     }
-
-    [HttpPost]
-    public IActionResult RegisterUserPost(string username, string password)
-    {
-        UserModel user = new UserModel(username, password);
-
-        _context.Users.Add(user);
-        _context.SaveChanges();
-
-        return Ok(new { message = "User created", id = user.id });
-    }
 }

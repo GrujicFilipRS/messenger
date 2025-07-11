@@ -17,6 +17,8 @@ public class UserModel
         this.id = id;
         this.username = username;
         this.hashedPassword = hashedPassword;
+
+        users.Add(this);
     }
 
     public UserModel(string username, string password)

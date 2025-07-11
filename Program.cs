@@ -35,8 +35,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-new UserModel("admin", "admin");
-
 app.UseRouting();
 app.UseSession();
 

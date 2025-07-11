@@ -14,4 +14,11 @@ public class UserService
         _context.Users.Add(user);
         _context.SaveChanges();
     }
+
+    public List<UserModel> LoadAllUsers()
+    {
+        return _context.Users
+            .Select(u => new UserModel(u.id, u.username, u.hashedPassword))
+            .ToList();
+    }
 }

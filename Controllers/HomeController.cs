@@ -13,6 +13,8 @@ public class HomeController : Controller
     {
         _logger = logger;
         _userService = userService;
+
+        _userService.LoadAllUsers();
     }
 
     public IActionResult Index()
@@ -54,20 +56,24 @@ public class HomeController : Controller
     [Route("signup")]
     public IActionResult Signup([FromForm] string username, [FromForm] string pwd, [FromForm] string confirmpwd)
     {
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(pwd))
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(pwd) || string.IsNullOrWhiteSpace(confirmpwd))
             return Redirect("/?signup&error=1");
 
         username = username.Trim();
         pwd = pwd.Trim();
+        confirmpwd = confirmpwd.Trim();
 
-        if (!UserModel.ValidPassword(pwd))
+        if (pwd != confirmpwd)
             return Redirect("/?signup&error=2");
 
-        if (!UserModel.ValidUsername(username))
+        if (!UserModel.ValidPassword(pwd))
             return Redirect("/?signup&error=3");
 
-        if (UserModel.UserWithNameExists(username))
+        if (!UserModel.ValidUsername(username))
             return Redirect("/?signup&error=4");
+
+        if (UserModel.UserWithNameExists(username))
+            return Redirect("/?signup&error=5");
 
         UserModel user = new UserModel(username, pwd);
 
