@@ -4,7 +4,7 @@ namespace Messenger.Models;
 
 public class UserModel
 {
-    private static List<UserModel> users = new List<UserModel>();
+    public static List<UserModel> users = new List<UserModel>();
 
     public int id { get; private set; }
     public string username { get; private set; }

@@ -24,6 +24,15 @@ builder.Services.AddSession(options =>
 
 WebApplication app = builder.Build();
 
+// Seed DB
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    IServiceProvider services = scope.ServiceProvider;
+    AppDbContext context = services.GetRequiredService<AppDbContext>();
+
+    DataSeeder.Initialize(context);
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -31,6 +40,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
