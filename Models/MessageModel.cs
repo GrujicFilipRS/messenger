@@ -11,6 +11,7 @@ public class MessageModel
     public int fromUserId { get; private set; }
     public int toUserId { get; private set; }
     public string messageText { get; private set; }
+    public DateTime messageSentTime { get; private set; }
 
     public MessageModel() { }
 
@@ -19,6 +20,7 @@ public class MessageModel
         this.fromUserId = fromUserId;
         toUserId = UserModel.users.Find(x => x.username == toUserUsername)!.id;
         messageText = HashMessage(message, fromUserId, toUserId);
+        messageSentTime = DateTime.Now;
     }
 
     public static string HashMessage(string message, int senderId, int receiverId)
