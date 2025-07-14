@@ -14,3 +14,6 @@ The following is a list of features planned to be added and functional in the fu
 ### Version 1.1
 
 - Image and video support
+
+
+Further plans will be written into this README file

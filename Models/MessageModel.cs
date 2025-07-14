@@ -23,6 +23,22 @@ public class MessageModel
         messageSentTime = DateTime.Now;
     }
 
+    public MessageModel(int fromUserId, int toUserId, string message)
+    {
+        this.fromUserId = fromUserId;
+        this.toUserId = toUserId;
+        messageText = HashMessage(message, fromUserId, toUserId);
+        messageSentTime = DateTime.Now;
+    }
+
+    public MessageModel(int fromUserId, int toUserId, string hashedMessage, DateTime messageSentTime)
+    {
+        this.fromUserId = fromUserId;
+        this.toUserId = toUserId;
+        messageText = hashedMessage;
+        this.messageSentTime = messageSentTime;
+    }
+
     public static string HashMessage(string message, int senderId, int receiverId)
     {
         string combinedKey = $"{Math.Min(senderId, receiverId)}-{Math.Max(senderId, receiverId)}";
