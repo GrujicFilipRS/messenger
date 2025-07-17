@@ -30,8 +30,8 @@ public class HomeController : Controller
         return View();
     }
 
-    [Route("messages")]
-    public IActionResult Messages()
+    [Route("messenger")]
+    public IActionResult Messenger()
     {
         return View();
     }
@@ -50,7 +50,7 @@ public class HomeController : Controller
         if (userId == null) return Redirect("/?p=login&error=2");
 
         HttpContext.Session.SetInt32("userid", userId.Value);
-        return Redirect($"/messages");
+        return Redirect($"/messenger");
     }
 
     [HttpPost]
@@ -81,7 +81,7 @@ public class HomeController : Controller
         _userService.RegisterUser(user);
 
         HttpContext.Session.SetInt32("userid", user.GetId());
-        return Redirect("/messages");
+        return Redirect("/messenger");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
