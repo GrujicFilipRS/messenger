@@ -33,8 +33,7 @@ public class HomeController : Controller
     [Route("messages")]
     public IActionResult Messages()
     {
-        int? name = HttpContext.Session.GetInt32("userid");
-        return Content($"Hello, {name}");
+        return View();
     }
 
     [HttpPost]
