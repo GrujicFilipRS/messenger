@@ -66,6 +66,8 @@ function displaySignupError() {
         case '4':
             error = 'Invalid username. A username must contain at least 6 letters, and it can consist of letters, numbers, and characters \'_\' and \'-\'';
             break;
+        case '5':
+            error = 'There already exists a user with that username';
         default:
             error = `Error undetected. Error code: '${errorId}'`;
             break;
