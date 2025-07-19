@@ -1,9 +1,15 @@
+@using Microsoft.AspNetCore.Http
 @{
     ViewData["Title"] = "Messages";
+    int userId = Context.Session.GetInt32("userid")!.Value;
 }
 
+<script>
+    const currentUserId = '@userId';
+</script>
+
 <link rel="stylesheet" href="./css/messenger.css">
-<script src="./js/messenger.js" defer></script>
+<script type="text/javascript" src="./js/messenger.js?v=3" defer></script> 
 
 <div class="content">
     <div class="contacts-side">
@@ -13,11 +19,12 @@
         </div>
 
         <div class="contacts-list">
-            <button class="contact">Contact 1</button>
+            <button class="contact">Contact 1: @userId</button>
             <button class="contact">Contact 2</button>
             <button class="contact">Contact 3</button>
             <button class="contact">Contact 4</button>
             <button class="contact">Contact 5</button>
+            <button class="contact" onclick="incrementUserIdToMessage()">Increment userId to message</button>
         </div>
     </div>
 
