@@ -1,6 +1,7 @@
 const loginForm = document.getElementById('login-form');
 const signupForm = document.getElementById('signup-form');
 const errorText = document.getElementById('error-display');
+const switchLoginModeButton = document.getElementById('switch-mode-btn');
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
@@ -15,9 +16,11 @@ function displayCorrectForm() {
     if (toDisplayLogin) {
         loginForm.style.display = 'flex';
         signupForm.style.display = 'none';
+        switchLoginModeButton.innerText = 'Make a new account';
     } else {
         loginForm.style.display = 'none';
         signupForm.style.display = 'flex';
+        switchLoginModeButton.innerText = 'I already have an account';
     }
 }
 
