@@ -15,6 +15,7 @@ The following is a list of features planned to be added and functional in the fu
 
 ### Version 1.1
 
+- "Continue with Google" button, link with Google API
 - Image and video support
 - Groupchats
 
