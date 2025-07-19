@@ -1,4 +1,5 @@
 using Messenger.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,17 @@ builder.Services.AddSession(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+});
+
+builder.Services.AddAuthentication("AuthScheme")
+    .AddScheme<AuthenticationSchemeOptions, AuthHandler>("AuthScheme", null);
+
+builder.Services.AddAuthorization();
+
+builder.Services.Configure<AuthenticationOptions>(options =>
+{
+    options.DefaultAuthenticateScheme = "AuthScheme";
+    options.DefaultChallengeScheme = "AuthScheme";
 });
 
 WebApplication app = builder.Build();
@@ -55,8 +67,3 @@ app.MapControllerRoute(
 
 
 app.Run();
-Console.WriteLine($"Length of users: {UserModel.users.Count}");
-foreach (UserModel user in UserModel.users)
-{
-    Console.WriteLine($"{user.id} {user.username} {user.hashedPassword.Substring(0, 10)}"); 
-}

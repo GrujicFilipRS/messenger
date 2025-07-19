@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Messenger.Models;
 using Microsoft.AspNetCore.Authorization;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class MessagesController : ControllerBase
