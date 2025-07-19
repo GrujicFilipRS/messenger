@@ -1,0 +1,69 @@
+body {
+    margin-bottom: 0px;
+}
+
+.pb-3 {
+    padding-bottom: 0px !important;
+}
+
+.container {
+    width: 90%;
+    max-width: 100vw;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}   
+
+.contacts-side {
+    width: 25%;
+    background-color: rgb(40, 40, 40);
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.contacts-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    height: 50px;
+}
+
+.contacts-list button {
+    width: 95%;
+    height: 70px;
+
+    background-color: rgb(40, 40, 40);
+
+    color: white;
+    border: 0px;
+    margin: auto;
+
+    border-radius: 7px;
+}
+
+.contacts-list button:hover {
+    background-color: rgb(50, 50, 50);
+}
+
+.message-side {
+    width: 100%;
+}
+
+.message-header {
+    height: 50px;
+    display: flex;
+    justify-content: right;
+    background-color: rgb(40, 40, 40);
+    border-bottom: 1px solid black;
+    align-items: center;
+    padding-right: 10px;
+}
+
+.message-header-btn {
+    height: 70%;
+}
