@@ -22,7 +22,7 @@
     </div>
 
     <div class="message-side">
-        <div class="message-header" onclick="alert('outside')">
+        <div id="message-header" class="message-header" onclick="alert('outside')">
             <button class="message-header-btn search-button" onclick="event.stopPropagation(); alert('inside1')">Search</button>
             <button class="message-header-btn options-button" onclick="event.stopPropagation(); alert('inside2')">Options</button>
         </div>

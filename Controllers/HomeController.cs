@@ -33,6 +33,8 @@ public class HomeController : Controller
     [Route("messenger")]
     public IActionResult Messenger()
     {
+        if (HttpContext.Session.GetInt32("userid") == null)
+            return Redirect("/");
         return View();
     }
 
