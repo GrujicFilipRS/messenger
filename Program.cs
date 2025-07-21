@@ -36,6 +36,9 @@ builder.Services.Configure<AuthenticationOptions>(options =>
 
 WebApplication app = builder.Build();
 
+// Enforcing HTTPS
+app.UseHttpsRedirection();
+
 // Seed DB
 using (IServiceScope scope = app.Services.CreateScope())
 {
