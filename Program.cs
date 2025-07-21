@@ -34,6 +34,8 @@ builder.Services.Configure<AuthenticationOptions>(options =>
     options.DefaultChallengeScheme = "AuthScheme";
 });
 
+builder.Services.AddSignalR();
+
 WebApplication app = builder.Build();
 
 // Enforcing HTTPS
@@ -68,5 +70,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();

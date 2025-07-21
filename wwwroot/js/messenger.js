@@ -1,20 +1,45 @@
 const messageHeader = document.getElementById('message-header');
 messageHeader.style.display = 'none';
 
-// The following code will only be used to design the webpage
-// After the design has been made, it will be deleted
+let messages = [];
+let connectionId = -1;
 
-let idToMessage = -1;
+class Message {
+    constructor(fromUserId, message, timeSent) {
+        this.fromUserId = fromUserId;
+        this.message = message;
+        this.timeSent = timeSent;
 
-function incrementUserIdToMessage() {
-    alert(idToMessage);
-    if (idToMessage == -1) {
-        idToMessage = 1;
+        messages.push(this);
     }
+};
 
-    idToMessage += 1;
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/chathub")
+    .build();
 
-    if (idToMessage == currentUserId) {
-        idToMessage += 1;
-    }
+connection.on("ReceiveConnectionId", id => {
+    connectionId = id;
+});
+
+connection.on("ReceiveMessage", (fromUserId, toUserId, message, timeSent) => {
+    ReceiveMessage(fromUserId, message, timeSent);
+});
+
+connection.start().then(() => {
+    connection.invoke("RegisterUser", currentUserId);
+});
+
+function ReceiveMessage(fromUserId, message, timeSent) {
+    new Message(fromUserId, message, timeSent);
+
+    UpdateUI();
+}
+
+function UpdateUI() {
+    console.log(messages);
+}
+
+function SendMessage(toUserId, message) {
+    connection.invoke("SendPrivateMessage", toUserId, message);
 }

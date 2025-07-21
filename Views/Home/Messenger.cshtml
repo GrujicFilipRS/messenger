@@ -1,21 +1,24 @@
 @using Microsoft.AspNetCore.Http
+@using Messenger.Controllers
 @{
     ViewData["Title"] = "Messages";
     int userId = Context.Session.GetInt32("userid")!.Value;
 }
 
 <script>
-    const currentUserId = '@userId';
+    const currentUserId = parseInt('@userId');
 </script>
 
 <link rel="stylesheet" href="./css/messenger.css">
-<script type="text/javascript" src="./js/messenger.js?v=3" defer></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js" defer></script>
+<script type="text/javascript" src="./js/messenger.js?v=<?= DateTime.Now.Ticks ?>" defer></script> 
 
 <div class="content">
     <div class="contacts-side">
         <div class="navbar">
             <button class="options-btn" title="Settings">S</button> <!-- Replace S and + with icons later -->
             <button class="add-contact-btn" title="Add contact">+</button>
+            <a href="/logout">Logout</a>
         </div>
 
         <div class="contacts-list">
