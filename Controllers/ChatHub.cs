@@ -30,11 +30,32 @@ public class ChatHub : Hub
         return base.OnDisconnectedAsync(exception);
     }
 
-    public async Task SendPrivateMessage(int toUserId, string message)
+    public async Task SendPrivateMessage(int fromUserId, int toUserId, string message)
     {
-        if (_userConnections.TryGetValue(toUserId, out var targetConnId))
+        Console.WriteLine($"SendPrivateMessage called: from={fromUserId}, to={toUserId}, message={message}");
+
+        try
         {
-            await Clients.Client(targetConnId).SendAsync("ReceiveMessage", message);
+            bool toExists = _userConnections.TryGetValue(toUserId, out string targetConnId);
+            bool fromExists = _userConnections.TryGetValue(fromUserId, out string senderConnId);
+
+            Console.WriteLine($"From exists: {fromExists}, To exists: {toExists}");
+
+            if (toExists && fromExists)
+            {
+                await Clients.Client(targetConnId!).SendAsync("ReceiveMessage", message, fromUserId, DateTime.Now);
+                await Clients.Client(senderConnId!).SendAsync("MessageSent", message, toUserId, DateTime.Now);
+                Console.WriteLine("Message sent successfully.");
+            }
+            else
+            {
+                Console.WriteLine("User not connected. Cannot send message.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] in SendPrivateMessage: {ex.Message}");
+            throw;
         }
     }
 }
