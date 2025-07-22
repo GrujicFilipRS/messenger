@@ -37,6 +37,7 @@ connection.on("ReceiveMessage", (message, fromUserId, timeSent) => {
 
 connection.on("MessageSent", (message, toUserId, timeSent) => {
     SendMessageConstruct(toUserId, message, timeSent);
+    UpdateUI();
 });
 
 connection.start().then(() => {
