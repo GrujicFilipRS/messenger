@@ -8,7 +8,7 @@ The following is a list of features planned to be added and functional in the fu
 ### Version 1.0 <-- currently in development
 
 - Usable login and signup system - <b>COMPLETE</b>
-- End-to-end encrypted messaging of text only - TODO
+- Messaging of text only - TODO
 - Blocking users
 - Profile picture upload
 
@@ -18,6 +18,7 @@ The following is a list of features planned to be added and functional in the fu
 - "Continue with Google" button, link with Google API
 - Image and video support
 - Groupchats
+- End to end encryption of messaging
 
 
 Further plans will be written into this README file
