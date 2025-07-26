@@ -39,6 +39,15 @@ public class MessageModel
         this.messageSentTime = messageSentTime;
     }
 
+    public MessageModel(int id, int fromUserId, int toUserId, string hashedMessage, DateTime messageSentTime)
+    {
+        this.id = id;
+        this.fromUserId = fromUserId;
+        this.toUserId = toUserId;
+        messageText = hashedMessage;
+        this.messageSentTime = messageSentTime;
+    }
+
     public static string HashMessage(string message, int senderId, int receiverId)
     {
         string combinedKey = $"{Math.Min(senderId, receiverId)}-{Math.Max(senderId, receiverId)}";
@@ -86,5 +95,17 @@ public class MessageModel
         using CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
         using StreamReader sr = new StreamReader(cs);
         return sr.ReadToEnd();
+    }
+
+    public static void LoadAll(AppDbContext context)
+    {
+        messages = context.Messages
+            .Select(u => new MessageModel(u.id, u.fromUserId, u.toUserId, u.messageText, u.messageSentTime))
+            .ToList();
+    }
+
+    public static MessageModel[] GetMessagesForUser(int userId)
+    {
+        return messages.Where(x => x.fromUserId == userId || x.toUserId == userId).ToArray();
     }
 }

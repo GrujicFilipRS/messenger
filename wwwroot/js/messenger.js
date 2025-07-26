@@ -35,6 +35,11 @@ connection.on("ReceiveMessage", (message, fromUserId, timeSent) => {
     ReceiveMessage(fromUserId, message, timeSent);
 });
 
+connection.on("ReceivePreviousMessage", (message, fromUserId, toUserId, timeSent) => {
+    new Message(fromUserId, toUserId, message, timeSent);
+    UpdateUI();
+});
+
 connection.on("MessageSent", (message, toUserId, timeSent) => {
     SendMessageConstruct(toUserId, message, timeSent);
     UpdateUI();

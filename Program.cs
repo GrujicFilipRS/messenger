@@ -16,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=app.db"));
 
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<MessageService>();
 
 builder.Services.AddSession(options =>
 {
@@ -47,6 +48,7 @@ using (IServiceScope scope = app.Services.CreateScope())
     AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     context.Database.EnsureCreated();
     UserModel.LoadAll(context);
+    MessageModel.LoadAll(context);
 }
 
 // Configure the HTTP request pipeline.

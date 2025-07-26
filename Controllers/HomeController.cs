@@ -9,13 +9,16 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly UserService _userService;
+    private readonly MessageService _messageService;
 
-    public HomeController(ILogger<HomeController> logger, UserService userService)
+    public HomeController(ILogger<HomeController> logger, UserService userService, MessageService messageService)
     {
         _logger = logger;
         _userService = userService;
+        _messageService = messageService;
 
         _userService.LoadAllUsers();
+        _messageService.LoadAllMessages();
     }
 
     public IActionResult Index()
