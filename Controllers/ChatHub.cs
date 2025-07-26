@@ -42,13 +42,15 @@ public class ChatHub : Hub
             bool toExists = _userConnections.TryGetValue(toUserId, out string targetConnId);
             bool fromExists = _userConnections.TryGetValue(fromUserId, out string senderConnId);
 
+            #if DEBUG
             Console.WriteLine($"From exists: {fromExists}, To exists: {toExists}");
+            #endif
 
             if (toExists && fromExists)
             {
                 await Clients.Client(targetConnId!).SendAsync("ReceiveMessage", message, fromUserId, DateTime.Now);
                 await Clients.Client(senderConnId!).SendAsync("MessageSent", message, toUserId, DateTime.Now);
-                
+
                 #if DEBUG
                 Console.WriteLine("Message sent successfully.");
                 #endif
