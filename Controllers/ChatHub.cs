@@ -11,8 +11,9 @@ public class ChatHub : Hub
         {
             _userConnections[userId] = Context.ConnectionId;
         }
-
+        #if DEBUG
         Console.WriteLine($"User {userId} registered with connection {Context.ConnectionId}");
+        #endif
     }
 
     public override Task OnDisconnectedAsync(Exception exception)
@@ -23,7 +24,9 @@ public class ChatHub : Hub
             if (key != null)
             {
                 _userConnections.Remove(key.Value);
+                #if DEBUG
                 Console.WriteLine($"User {key} disconnected");
+                #endif
             }
         }
 
@@ -45,17 +48,24 @@ public class ChatHub : Hub
             {
                 await Clients.Client(targetConnId!).SendAsync("ReceiveMessage", message, fromUserId, DateTime.Now);
                 await Clients.Client(senderConnId!).SendAsync("MessageSent", message, toUserId, DateTime.Now);
+                
+                #if DEBUG
                 Console.WriteLine("Message sent successfully.");
+                #endif
             }
             else
             {
+                #if DEBUG
                 Console.WriteLine("User not connected. Cannot send message.");
+                #endif
             }
         }
         catch (Exception ex)
         {
+            #if DEBUG
             Console.WriteLine($"[ERROR] in SendPrivateMessage: {ex.Message}");
             throw;
+            #endif
         }
     }
 }
