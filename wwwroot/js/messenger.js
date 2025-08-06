@@ -2,6 +2,7 @@ const messageHeader = document.getElementById('message-header');
 messageHeader.style.display = 'none';
 
 let messages = [];
+let messagingPartners = new Set();
 let connectionId = -1;
 
 class Message {
@@ -12,6 +13,11 @@ class Message {
         this.timeSent = timeSent;
 
         messages.push(this);
+
+        if (this.fromUserId == currentUserId) // We sent the message, add the receiver to the set of partners
+            messagingPartners.add(toUserId);
+        else
+            messagingPartners.add(fromUserId); // Otherwise it is us who received the message, so add the sender
     }
 };
 

@@ -22,4 +22,9 @@ public class UserService
             .Select(u => new UserModel(u.id, u.username, u.hashedPassword))
             .ToList();
     }
+
+    public UserModel GetUserWithId(int userId)
+    {
+        return _context.Users.Where(x => x.id == userId).ToArray()[0];
+    }
 }

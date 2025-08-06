@@ -3,33 +3,35 @@ using Microsoft.AspNetCore.SignalR;
 
 public class ChatHub : Hub
 {
-    #if DEBUG
+#if DEBUG
     bool debugMode = true;
-    #else
+#else
     bool debugMode = false;
-    #endif
+#endif
 
-    private readonly MessageService _messageService;
+    private readonly MessageService messageService;
+    private readonly UserService userService;
 
     // In-memory map: userId → connectionId
-    private static readonly Dictionary<int, string> _userConnections = new();
+    private static readonly Dictionary<int, string> userConnections = new();
 
-    public ChatHub(MessageService messageService)
+    public ChatHub(MessageService messageService, UserService userService)
     {
-        _messageService = messageService;
+        this.messageService = messageService;
+        this.userService = userService;
     }
 
     public async Task RegisterUser(int userId)
     {
-        lock (_userConnections)
+        lock (userConnections)
         {
-            _userConnections[userId] = Context.ConnectionId;
+            userConnections[userId] = Context.ConnectionId;
         }
-        
+
         if (debugMode)
             Console.WriteLine($"User {userId} registered with connection {Context.ConnectionId}");
 
-        _userConnections.TryGetValue(userId, out string connId);
+        userConnections.TryGetValue(userId, out string connId);
         foreach (MessageModel messageModel in MessageModel.GetMessagesForUser(userId))
         {
             await Clients.Client(connId!).SendAsync("ReceivePreviousMessage", messageModel.messageText, messageModel.fromUserId, messageModel.toUserId, messageModel.messageSentTime);
@@ -38,12 +40,12 @@ public class ChatHub : Hub
 
     public override Task OnDisconnectedAsync(Exception exception)
     {
-        lock (_userConnections)
+        lock (userConnections)
         {
-            int? key = _userConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+            int? key = userConnections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
             if (key != null)
             {
-                _userConnections.Remove(key.Value);
+                userConnections.Remove(key.Value);
                 if (debugMode)
                     Console.WriteLine($"User {key} disconnected");
             }
@@ -54,12 +56,13 @@ public class ChatHub : Hub
 
     public async Task SendPrivateMessage(int fromUserId, int toUserId, string message)
     {
-        Console.WriteLine($"SendPrivateMessage called: from={fromUserId}, to={toUserId}, message={message}");
+        if (debugMode)
+            Console.WriteLine($"SendPrivateMessage called: from={fromUserId}, to={toUserId}, message={message}");
 
         try
         {
-            bool toExists = _userConnections.TryGetValue(toUserId, out string targetConnId);
-            bool fromExists = _userConnections.TryGetValue(fromUserId, out string senderConnId);
+            bool toExists = userConnections.TryGetValue(toUserId, out string targetConnId);
+            bool fromExists = userConnections.TryGetValue(fromUserId, out string senderConnId);
 
             if (debugMode)
                 Console.WriteLine($"From exists: {fromExists}, To exists: {toExists}");
@@ -73,9 +76,9 @@ public class ChatHub : Hub
 
                 if (debugMode)
                     Console.WriteLine("Message sent successfully.");
-                
+
                 MessageModel messageModel = new MessageModel(fromUserId, toUserId, message, currTime);
-                _messageService.SendMessage(messageModel); // This needs to be accessed
+                messageService.SendMessage(messageModel); // This needs to be accessed
             }
             else
             {
@@ -85,10 +88,33 @@ public class ChatHub : Hub
         }
         catch (Exception ex)
         {
-            if (debugMode) {
+            if (debugMode)
+            {
                 Console.WriteLine($"[ERROR] in SendPrivateMessage: {ex.Message}");
                 throw;
             }
         }
+    }
+
+    public async Task GetUsernameFromId(int currentUserId, int userIdToUsername)
+    {
+        if (!userConnections.TryGetValue(currentUserId, out string connId))
+        {
+            if (debugMode)
+                Console.WriteLine($"GetUsernameFromId: no connection id exists");
+            return;
+        }
+
+        string username;
+        try
+        {
+            username = userService.GetUserWithId(userIdToUsername).username;
+        }
+        catch (Exception e)
+        {
+            username = "User not found";
+        }
+
+        await Clients.Client(connId!).SendAsync("UsernameReceive", username);
     }
 }
