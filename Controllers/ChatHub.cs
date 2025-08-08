@@ -59,6 +59,7 @@ public class ChatHub : Hub
         if (debugMode)
             Console.WriteLine($"SendPrivateMessage called: from={fromUserId}, to={toUserId}, message={message}");
 
+        DateTime currTime = DateTime.Now;
         try
         {
             bool toExists = userConnections.TryGetValue(toUserId, out string targetConnId);
@@ -69,8 +70,6 @@ public class ChatHub : Hub
 
             if (toExists && fromExists)
             {
-                DateTime currTime = DateTime.Now;
-
                 await Clients.Client(targetConnId!).SendAsync("ReceiveMessage", message, fromUserId, currTime);
                 await Clients.Client(senderConnId!).SendAsync("MessageSent", message, toUserId, currTime);
 
@@ -82,8 +81,19 @@ public class ChatHub : Hub
             }
             else
             {
-                if (debugMode)
-                    Console.WriteLine("User not connected. Cannot send message.");
+                try
+                {
+                    UserModel user = userService.GetUserWithId(toUserId);
+
+                    MessageModel messageModel = new MessageModel(fromUserId, toUserId, message, currTime);
+                    messageService.SendMessage(messageModel); // This needs to be accessed
+                    await Clients.Client(senderConnId!).SendAsync("MessageSent", message, user.id, currTime);
+                }
+                catch (IndexOutOfRangeException e) // User with id doesn't exist
+                {
+                    if (debugMode)
+                        Console.WriteLine($"User {toUserId} doesn't exist");
+                }
             }
         }
         catch (Exception ex)
@@ -96,15 +106,8 @@ public class ChatHub : Hub
         }
     }
 
-    public async Task GetUsernameFromId(int currentUserId, int userIdToUsername)
+    public async Task<string> GetUsernameFromId(int userIdToUsername)
     {
-        if (!userConnections.TryGetValue(currentUserId, out string connId))
-        {
-            if (debugMode)
-                Console.WriteLine($"GetUsernameFromId: no connection id exists");
-            return;
-        }
-
         string username;
         try
         {
@@ -115,6 +118,6 @@ public class ChatHub : Hub
             username = "User not found";
         }
 
-        await Clients.Client(connId!).SendAsync("UsernameReceive", username);
+        return username;
     }
 }
