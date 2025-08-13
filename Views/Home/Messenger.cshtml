@@ -16,6 +16,14 @@
     <button class="contact-button" style="display: none;">Test</button>
 </template>
 
+<template id="outgoing-message-template">
+    <div class="outgoing-message">Outgoing Message</div>
+</template>
+
+<template id="ingoing-message-template">
+    <div class="ingoing-message">Ingoing Message</div>
+</template>
+
 <div class="content">
     <div class="contacts-side">
         <div class="navbar">
@@ -32,6 +40,10 @@
         <div id="message-header" class="message-header" onclick="alert('outside')">
             <button class="message-header-btn search-button" onclick="event.stopPropagation(); alert('inside1')">Search</button>
             <button class="message-header-btn options-button" onclick="event.stopPropagation(); alert('inside2')">Options</button>
+        </div>
+
+        <div itemid="message-area" class="message-area">
+
         </div>
     </div>
 </div>

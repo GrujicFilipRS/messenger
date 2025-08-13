@@ -6,6 +6,7 @@ const contactTemplate = document.getElementById('contact-template');
 let messages = [];
 let messagingPartners = new Set();
 let connectionId = -1;
+const finalUpdateTimeout = 100; // The amount of time needed to pass before UpdateUI is called a final time when loading into the webpage
 
 let conversations = [];
 
@@ -35,7 +36,7 @@ function updateConversation(userId) {
     updateUITimer = setTimeout(() => {
         UpdateUI();
         updateUITimer = null;
-    }, 20);
+    }, finalUpdateTimeout);
 }
 
 function SendMessageConstruct(toUserId, message, timeSent) {
@@ -104,5 +105,13 @@ async function createContactElement(userId) {
     }
 
     contactCopy.style.display = 'block';
+    contactCopy.onclick = () => {
+        displayConversation(userId);
+    };
+
     return contactCopy;
+}
+
+function displayConversation(convoId) {
+    console.log(`Displayed conversation: ${convoId}`);
 }
