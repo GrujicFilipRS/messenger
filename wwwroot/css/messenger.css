@@ -33,7 +33,7 @@ body {
     height: 50px;
 }
 
-.contacts-list button {
+.contact-button {
     width: 95%;
     height: 70px;
 
@@ -46,7 +46,7 @@ body {
     border-radius: 7px;
 }
 
-.contacts-list button:hover {
+.contact-button:hover {
     background-color: rgb(50, 50, 50);
 }
 

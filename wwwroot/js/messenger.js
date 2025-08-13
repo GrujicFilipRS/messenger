@@ -1,7 +1,7 @@
 const messageHeader = document.getElementById('message-header');
 messageHeader.style.display = 'none';
 const contactsList = document.getElementById('contacts-list');
-const contactButton = document.getElementsByClassName('contact')[0];
+const contactTemplate = document.getElementById('contact-template');
 
 let messages = [];
 let messagingPartners = new Set();
@@ -18,29 +18,24 @@ class Message {
 
         messages.push(this);
 
-        let userIdToAdd = this.toUserId;
-        if (this.fromUserId == currentUserId) // We sent the message, add the receiver to the set of partners
-        {
-            messagingPartners.add(toUserId);
-        }
-        else // Otherwise it is us who received the message, so add the sender
-        {
-            messagingPartners.add(fromUserId);
-            userIdToAdd = this.fromUserId;
-        }
+        // Determine which user to add to conversation list
+        const userIdToAdd = (this.fromUserId === currentUserId) ? this.toUserId : this.fromUserId;
+        messagingPartners.add(userIdToAdd);
 
         updateConversation(userIdToAdd);
     }
 };
 
+let updateUITimer;
 function updateConversation(userId) {
-    if (conversations.includes(userId)) {
-        conversations = conversations.filter(x => x !== userId);
-    }
+    conversations = conversations.filter(x => x !== userId);
+    conversations.unshift(userId);
 
-    conversations.splice(0, 0, userId);
-
-    UpdateUI();
+    if (updateUITimer) clearTimeout(updateUITimer);
+    updateUITimer = setTimeout(() => {
+        UpdateUI();
+        updateUITimer = null;
+    }, 20);
 }
 
 function SendMessageConstruct(toUserId, message, timeSent) {
@@ -51,6 +46,7 @@ function ReceiveMessageConstruct(fromUserId, message, timeSent) {
     new Message(fromUserId, currentUserId, message, timeSent);
 }
 
+// SignalR connection
 const connection = new signalR.HubConnectionBuilder()
     .withUrl("/chathub")
     .build();
@@ -60,69 +56,53 @@ connection.on("ReceiveConnectionId", id => {
 });
 
 connection.on("ReceiveMessage", (message, fromUserId, timeSent) => {
-    ReceiveMessage(fromUserId, message, timeSent);
+    ReceiveMessageConstruct(fromUserId, message, timeSent);
 });
 
 connection.on("ReceivePreviousMessage", (message, fromUserId, toUserId, timeSent) => {
     new Message(fromUserId, toUserId, message, timeSent);
-    if (fromUserId == currentUserId)
-        updateConversation(toUserId);
-    else
-        updateConversation(fromUserId);
-    UpdateUI();
 });
 
 connection.on("MessageSent", (message, toUserId, timeSent) => {
     SendMessageConstruct(toUserId, message, timeSent);
-    updateConversation(toUserId);
-    UpdateUI();
 });
 
 connection.start().then(() => {
-    connection.invoke("RegisterUser", currentUserId).then(() => {
-        console.log('Registered successfuly');
-    });
+    connection.invoke("RegisterUser", currentUserId)
+        .then(() => {
+            console.log('Registered successfully');
+            UpdateUI();
+        });
 });
 
 function ReceiveMessage(fromUserId, message, timeSent) {
     ReceiveMessageConstruct(fromUserId, message, timeSent);
-    updateConversation(fromUserId);
-    UpdateUI();
-}
-
-function UpdateUI() {
-    console.log("UpdateUI called");
-    while (contactsList.firstChild) {
-        contactsList.removeChild(contactsList.firstChild);
-    }
-
-    conversations.forEach(userId => {
-        UpdateConvoUI(userId);
-    });
-}
-
-function UpdateConvoUI(userId) {
-    console.log(`UpdateConvoUI: ${userId}`);
-    let contactCopy = contactButton.cloneNode(true);
-
-    let usernameToDisplay;
-    connection.invoke("GetUsernameFromId", userId).then(usernameReceived => {
-        usernameToDisplay = usernameReceived;
-
-        // Updating the UI of the new contact button
-        // For now only the username will be displayed
-        // TODO update in the future 
-        contactCopy.innerHTML = usernameToDisplay;
-        contactCopy.style.display = 'block';
-
-        contactsList.appendChild(contactCopy);
-        console.log('added contact!');
-    })
-    .catch(err => {
-        console.error("Error fetching username:", err);
-    });
 }
 
 function SendMessage(toUserId, message) {
     connection.invoke("SendPrivateMessage", currentUserId, toUserId, message);
+}
+
+async function UpdateUI() {
+    contactsList.innerHTML = '';
+
+    const promises = conversations.map(userId => createContactElement(userId));
+    const elements = await Promise.all(promises);
+
+    elements.forEach(el => contactsList.appendChild(el));
+}
+
+async function createContactElement(userId) {
+    const contactCopy = contactTemplate.content.firstElementChild.cloneNode(true);
+
+    try {
+        const username = await connection.invoke("GetUsernameFromId", userId);
+        contactCopy.textContent = username;
+    } catch (err) {
+        console.error("Error fetching username:", err);
+        contactCopy.textContent = `User ${userId}`;
+    }
+
+    contactCopy.style.display = 'block';
+    return contactCopy;
 }
