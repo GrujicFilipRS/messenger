@@ -68,12 +68,10 @@ connection.on("MessageSent", (message, toUserId, timeSent) => {
     SendMessageConstruct(toUserId, message, timeSent);
 });
 
-connection.start().then(() => {
-    connection.invoke("RegisterUser", currentUserId)
-        .then(() => {
-            console.log('Registered successfully');
-            UpdateUI();
-        });
+connection.start().then(async () => {
+    await connection.invoke("RegisterUser", currentUserId);
+    console.log("Registered successfully");
+    UpdateUI();
 });
 
 function ReceiveMessage(fromUserId, message, timeSent) {
