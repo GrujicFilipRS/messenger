@@ -8,7 +8,7 @@
     const currentUserId = parseInt('@userId');
 </script>
 
-<link rel="stylesheet" href="./css/messenger.css">
+<link rel="stylesheet" href="./css/messenger.css?v=@DateTime.Now.Ticks">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 <script type="text/javascript" src="./js/messenger.js?v=@DateTime.Now.Ticks" defer></script> 
 
@@ -37,9 +37,15 @@
     </div>
 
     <div class="message-side">
-        <div id="message-header" class="message-header" onclick="alert('outside')">
-            <button class="message-header-btn search-button" onclick="event.stopPropagation(); alert('inside1')">Search</button>
-            <button class="message-header-btn options-button" onclick="event.stopPropagation(); alert('inside2')">Options</button>
+        <div id="message-header" class="message-header" onclick="">
+            <div class="left-side-header">
+                <p class="message-contact-name" id="contact-name-text">Contact Name</p>
+            </div>
+
+            <div class="right-side-header">
+                <button class="message-header-btn search-button" onclick="event.stopPropagation();">Search</button>
+                <button class="message-header-btn options-button" onclick="event.stopPropagation();">Options</button>
+            </div>
         </div>
 
         <div itemid="message-area" class="message-area">

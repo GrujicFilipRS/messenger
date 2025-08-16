@@ -2,11 +2,11 @@ const messageHeader = document.getElementById('message-header');
 messageHeader.style.display = 'none';
 const contactsList = document.getElementById('contacts-list');
 const contactTemplate = document.getElementById('contact-template');
+const contactNameText = document.getElementById('contact-name-text');
 
 let messages = [];
 let messagingPartners = new Set();
 let connectionId = -1;
-const finalUpdateTimeout = 100; // The amount of time needed to pass before UpdateUI is called a final time when loading into the webpage
 
 let conversations = [];
 
@@ -110,6 +110,7 @@ async function createContactElement(userId) {
     return contactCopy;
 }
 
-function displayConversation(convoId) {
-    console.log(`Displayed conversation: ${convoId}`);
+async function displayConversation(convoId) {
+    messageHeader.style.display = 'flex';
+    contactNameText.innerText = await connection.invoke("GetUsernameFromId", convoId);
 }
